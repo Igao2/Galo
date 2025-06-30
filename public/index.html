@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Próximos Jogos</title>
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+   
+    #matches-grid {
+        z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      list-style: none;
+      padding: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .match-card {
+      background-color: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.2s;
+      height: 200px; 
+      justify-content: space-between;
+      
+    }
+
+    .match-card:hover {
+      transform: translateY(-4px);
+    }
+
+.crests {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px; 
+  width: 100%;
+  margin-bottom: 9px;
+}
+
+.crests .X {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 8px;
+}
+
+ .crest-container {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+.crest-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.crests-container .X {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 8px;
+}
+
+
+    .info {
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.2;
+    }
+
+    .info .date {
+      margin-bottom: 4px;
+    }
+
+    .info .comp {
+      font-weight: bold;
+    }
+
+
+.stripes-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: -1;
+  justify-content: space-between;
+  padding: 0 10%; 
+}
+
+.stripes-bg div {
+  width: 5%; /* Largura das listras */
+  background-color: white;
+  opacity: 0.4; /* Ajuste a opacidade conforme desejado */
+  height: 100%;
+  
+}
+
+  @media screen and (min-width: 320px) and (orientation:portrait){
+  #matches-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .match-card {
+    height: 250px;
+    font-size: 1rem;
+  }
+
+  .crests img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .crests .X {
+    font-size: 1.8rem;
+  }
+}
+  </style>
+</head>
+<body>
+<div class="stripes-bg">
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+  <h1>Partidas Agendadas</h1>
+  <ul id="matches-grid">
+    
+  </ul>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+
+      fetch('/teams')
+        .then(res => res.json())
+        .then(data => {
+        console.log(data)
+          const matches = data.matches || [];
+          const grid = document.getElementById('matches-grid');
+
+          if (matches.length === 0) {
+            grid.innerHTML = '<li>Nenhuma partida agendada.</li>';
+            return;
+          }
+
+          matches.forEach(match => {
+            const li = document.createElement('li');
+            li.className = 'match-card';
+            const crestsDiv = document.createElement('div');
+            const xdiv = document.createElement('p')
+            xdiv.textContent = "X"
+            xdiv.className = 'X'
+            crestsDiv.className = 'crests';
+            
+            const crestHome = document.createElement('div');
+            crestHome.className = 'crest-container';
+            const imgHome = document.createElement('img');
+            imgHome.src = match.homeTeam.crest;
+            imgHome.alt = match.homeTeam.name;
+            crestHome.appendChild(imgHome);
+
+            const crestAway = document.createElement('div');
+            crestAway.className = 'crest-container';
+            const imgAway = document.createElement('img');
+            imgAway.src = match.awayTeam.crest;
+            imgAway.alt = match.awayTeam.name;
+            crestAway.appendChild(imgAway);
+
+           crestsDiv.appendChild(crestHome);
+           crestsDiv.appendChild(xdiv);
+           crestsDiv.appendChild(crestAway);
+            
+
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'info';
+            const date = new Date(match.utcDate).toLocaleString('pt-BR', {
+              day: '2-digit', month: '2-digit', year: 'numeric',
+              hour: '2-digit', minute: '2-digit'
+            });
+            infoDiv.innerHTML = `
+              <div class="date">${date}</div>
+              <div class="comp">${match.competition.name}</div>
+            `;
+
+            li.appendChild(crestsDiv);
+            li.appendChild(infoDiv);
+            grid.appendChild(li);
+
+              
+          });
+
+        })
+        .catch(err => {
+          console.error(err);
+          document.getElementById('matches-grid')
+            .innerHTML = '<li>Erro ao carregar as partidas.</li>';
+        });
+      
+
+
+
+       
+          
+    });
+
+    
+   
+  </script>
+
+</body>
+</html>
