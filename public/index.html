@@ -36,22 +36,24 @@
     }
 
     .match-card {
-      background-color: #111;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.2s;
-      height: 200px; 
-      justify-content: space-between;
-      
-    }
+  background-color: #111;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  height: 230px; 
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
 
-    .match-card:hover {
-      transform: translateY(-4px);
-    }
+.match-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: #FFD700;
+  box-shadow: 0 0 15px rgba(255,215,0,0.5);
+}
 
 .crests {
   display: flex;
@@ -81,6 +83,12 @@
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.crest-container img:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 6px rgba(255,215,0,0.6));
 }
 
 .crests-container .X {
@@ -96,13 +104,18 @@
       line-height: 1.2;
     }
 
-    .info .date {
-      margin-bottom: 4px;
-    }
+.info .date {
+  margin-bottom: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+}
 
-    .info .comp {
-      font-weight: bold;
-    }
+.info .comp {
+  font-weight: bold;
+  color: #FFD700;
+  font-size: 0.95rem;
+}
+
 
 
 .stripes-bg {
@@ -119,10 +132,9 @@
 
 .stripes-bg div {
   width: 5%; 
-  background-color: white;
-  opacity: 0.4; 
+  background: linear-gradient(to bottom, rgba(243, 243, 240, 0.1), rgba(255, 255, 255, 0.05));
+  opacity: 0.8; 
   height: 100%;
-  
 }
 
   @media screen and (min-width: 320px) and (orientation:portrait){
@@ -168,6 +180,7 @@
           if (spotlight.length === 0) {
             return
           }
+          
           let spor = {date:spotlight.date.split(",")[0],
             time:spotlight.date.split(",")[1],
             tournament:spotlight.league,
@@ -181,7 +194,7 @@
             
           });
           
-          console.log(matches)
+       
           
           const grid = document.getElementById('matches-grid');
 
@@ -191,6 +204,11 @@
           }
 
           matches.forEach(match => {
+            for(var i = 0 ; i<match.teams.length;i++){
+              if(match.teams[i].name=="Atlético Mineiro"){
+                match.teams[i].thumbnail = "https://ssl.gstatic.com/onebox/media/sports/logos/q9fhEsgpuyRq58OgmSndcQ_96x96.png"
+              }
+            }
             const li = document.createElement('li');
             li.className = 'match-card';
             const crestsDiv = document.createElement('div');
@@ -225,7 +243,7 @@
               day: '2-digit', month: '2-digit', year: 'numeric',
               hour: '2-digit', minute: '2-digit'
             });
-            console.log(date);
+            
             infoDiv.innerHTML = `
               <div class="date">${date}</div>
               <div class="comp">${match.tournament}</div>
