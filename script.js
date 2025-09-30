@@ -3,38 +3,24 @@ const axios = require('axios');
 const cors = require('cors');
 const app = express();
 const path = require('path');
+const { getJson } = require("serpapi");
 app.use(cors());
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')));
-app.get('/areas', async (req, res) => {
-  try {
-    const response = await axios.get('http://api.football-data.org/v4/areas/', {
-      headers: {
-        'X-Auth-Token': '6d67e83fb5f9427185b8a31be079b511'
-      }
-    });
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao buscar dados' });
-  }
-});
+
 app.get('/teams', async (req, res) => {
   try {
-    const response = await axios.get('http://api.football-data.org/v4/teams/1766/matches', {
-      headers: {
-        'X-Auth-Token': '6d67e83fb5f9427185b8a31be079b511'
-      },
-      params:{
-        status: "SCHEDULED"
-      }
+    const data = await getJson({
+      engine: "google",
+      api_key: "42031a69d250ede8ac5f156c3b5a75376cacfb4e8c5fb3d96d4f0788b74124ff",
+      q: "Jogos atlético mg",
+      location: "Brazil" 
     });
-    console.log(response.data)
-    res.json(response.data);
 
-    
-  } catch (err) {
-    console.log(err)
-    res.status(500).json({ error: 'Erro ao buscar dados' });
+    res.json(data.sports_results || data); 
+  } catch (error) {
+    console.error("Erro ao buscar jogos:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 

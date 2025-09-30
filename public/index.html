@@ -158,13 +158,31 @@
   </ul>
 
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
+     window.addEventListener('DOMContentLoaded', () => {
 
       fetch('/teams')
         .then(res => res.json())
         .then(data => {
         console.log(data)
-          const matches = data.matches || [];
+          const spotlight = data.game_spotlight || [];
+          if (spotlight.length === 0) {
+            return
+          }
+          let spor = {date:spotlight.date.split(",")[0],
+            time:spotlight.date.split(",")[1],
+            tournament:spotlight.league,
+            teams:spotlight.teams
+          }
+          const matches = []
+          matches.push(spor);
+          data.games.forEach(game => {
+            
+              matches.push(game);
+            
+          });
+          
+          console.log(matches)
+          
           const grid = document.getElementById('matches-grid');
 
           if (matches.length === 0) {
@@ -184,15 +202,15 @@
             const crestHome = document.createElement('div');
             crestHome.className = 'crest-container';
             const imgHome = document.createElement('img');
-            imgHome.src = match.homeTeam.crest;
-            imgHome.alt = match.homeTeam.name;
+            imgHome.src = match.teams[0].thumbnail;
+            imgHome.alt = match.teams[0].name;
             crestHome.appendChild(imgHome);
 
             const crestAway = document.createElement('div');
             crestAway.className = 'crest-container';
             const imgAway = document.createElement('img');
-            imgAway.src = match.awayTeam.crest;
-            imgAway.alt = match.awayTeam.name;
+            imgAway.src = match.teams[1].thumbnail;
+            imgAway.alt = match.teams[1].name;
             crestAway.appendChild(imgAway);
 
            crestsDiv.appendChild(crestHome);
@@ -203,13 +221,14 @@
             
             const infoDiv = document.createElement('div');
             infoDiv.className = 'info';
-            const date = new Date(match.utcDate).toLocaleString('pt-BR', {
+            const date = new Date(match.date+",2025,"+match.time).toLocaleString('pt-BR', {
               day: '2-digit', month: '2-digit', year: 'numeric',
               hour: '2-digit', minute: '2-digit'
             });
+            console.log(date);
             infoDiv.innerHTML = `
               <div class="date">${date}</div>
-              <div class="comp">${match.competition.name}</div>
+              <div class="comp">${match.tournament}</div>
             `;
 
             li.appendChild(crestsDiv);
@@ -233,8 +252,6 @@
           
     });
 
-    
-   
   </script>
 
 </body>
