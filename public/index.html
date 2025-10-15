@@ -175,22 +175,23 @@
       fetch('/teams')
         .then(res => res.json())
         .then(data => {
-        console.log(data)
+          const matches = [];
+       
           const spotlight = data.game_spotlight || [];
-          if (spotlight.length === 0) {
-            return
-          }
-          
-          let spor = {date:spotlight.date.split(",")[0],
+          if (data.hasOwnProperty('game_spotlight')): {
+           
+            let spor = {date:spotlight.date.split(",")[0],
             time:spotlight.date.split(",")[1],
             tournament:spotlight.league,
             teams:spotlight.teams
           }
-          const matches = []
+          
           matches.push(spor);
+        }
+        
           data.games.forEach(game => {
             
-              matches.push(game);
+            matches.push(game);
             
           });
           
