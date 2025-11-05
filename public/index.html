@@ -178,14 +178,28 @@
           const matches = [];
        
           const spotlight = data.game_spotlight || [];
-          if (data.hasOwnProperty('game_spotlight')): {
+          if (data.hasOwnProperty('game_spotlight')){
            
             let spor = {date:spotlight.date.split(",")[0],
             time:spotlight.date.split(",")[1],
             tournament:spotlight.league,
             teams:spotlight.teams
           }
+           const today = new Date();
+          switch(spor.date){
+             case "today":
+      spor.date = today.toDateString().split("2025")[0];
+      break;
+    case "tomorrow":
+      
+      spor.date= today.setDate(today.getDate() + 1).toDateString().split("2025")[0]
+     
+      break;
+    default:
+      spor.date = spor.date;
+          }
           
+          console.log(spor)
           matches.push(spor);
         }
         
@@ -194,7 +208,7 @@
             matches.push(game);
             
           });
-          
+          console.log(matches)
        
           
           const grid = document.getElementById('matches-grid');
